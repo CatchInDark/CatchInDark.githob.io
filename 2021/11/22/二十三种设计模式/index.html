@@ -503,7 +503,7 @@
 
 
 
-<h3 id="2、懒汉式"><a href="#2、懒汉式" class="headerlink" title="2、懒汉式"></a>2、懒汉式</h3><p>使用时才初始化（但是带来线程安全问题）</p>
+<h3 id="2、懒汉模式"><a href="#2、懒汉模式" class="headerlink" title="2、懒汉模式"></a>2、懒汉模式</h3><p>使用时才初始化（但是带来线程安全问题）</p>
 <pre class="language-java" data-language="java"><code class="language-java"><span class="token comment">//双重判断</span>
 <span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Singleton</span> <span class="token punctuation">&#123;</span>
 
@@ -605,6 +605,104 @@
       context <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Context</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">OperationMultiply</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>    
       <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"10 * 5 = "</span> <span class="token operator">+</span> context<span class="token punctuation">.</span><span class="token function">executeStrategy</span><span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">,</span> <span class="token number">5</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<h2 id="三、工厂模式"><a href="#三、工厂模式" class="headerlink" title="三、工厂模式"></a>三、工厂模式</h2><p>核心本质：</p>
+<p>​            实例化对象不使用new，用工厂方法代替；将选择实现类，创建统一管理和控制。从而将调用者跟我们的实现类解耦。</p>
+<h3 id="1、简单工厂模式"><a href="#1、简单工厂模式" class="headerlink" title="1、简单工厂模式"></a>1、简单工厂模式</h3><p>​            设计出产品模型（接口），根据模型设计不同产品（实现类），工厂拿到产品订单（实现类名）生产对应产品（实现类对象）。</p>
+<p>​            确点，添加产品，不仅需要添加新的产品，还要改动工厂类（违反了“开闭原则”）。</p>
+<pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">interface</span> <span class="token class-name">Car</span> <span class="token punctuation">&#123;</span>
+   <span class="token keyword">void</span> <span class="token function">name</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">AstonMartin</span> <span class="token keyword">implements</span> <span class="token class-name">Car</span> <span class="token punctuation">&#123;</span>
+   <span class="token annotation punctuation">@Override</span>
+   <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">name</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+      <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"007 专属座驾！"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+   <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Mitsubishi</span> <span class="token keyword">implements</span> <span class="token class-name">Car</span> <span class="token punctuation">&#123;</span>
+   <span class="token annotation punctuation">@Override</span>
+   <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">name</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+      <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"成龙 御用！"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+   <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">CarFactory</span> <span class="token punctuation">&#123;</span>
+    
+   <span class="token comment">//使用 getShape 方法获取形状类型的对象</span>
+   <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token class-name">Car</span> <span class="token function">getCar</span><span class="token punctuation">(</span><span class="token class-name">String</span> carName<span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+      <span class="token keyword">if</span><span class="token punctuation">(</span>carName <span class="token operator">==</span> <span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+         <span class="token keyword">return</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+      <span class="token punctuation">&#125;</span>        
+      <span class="token keyword">if</span><span class="token punctuation">(</span>carName<span class="token punctuation">.</span><span class="token function">equalsIgnoreCase</span><span class="token punctuation">(</span><span class="token string">"AstonMartin"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+         <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">AstonMartin</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token punctuation">&#125;</span> <span class="token keyword">else</span> <span class="token keyword">if</span><span class="token punctuation">(</span>carName<span class="token punctuation">.</span><span class="token function">equalsIgnoreCase</span><span class="token punctuation">(</span><span class="token string">"Mitsubishi"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+         <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">Mitsubishi</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token punctuation">&#125;</span> 
+      <span class="token keyword">return</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+   <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">FactoryDemo</span> <span class="token punctuation">&#123;</span>
+ 
+   <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+      <span class="token class-name">Car</span> astonMartin <span class="token operator">=</span> <span class="token class-name">CarFactory</span><span class="token punctuation">.</span><span class="token function">getCar</span><span class="token punctuation">(</span><span class="token string">"AstonMartin"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+ 	  astonMartin<span class="token punctuation">.</span><span class="token function">name</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+   <span class="token punctuation">&#125;</span>
+   
+<span class="token punctuation">&#125;</span></code></pre>
+
+
+
+<h3 id="2、工厂方法模式"><a href="#2、工厂方法模式" class="headerlink" title="2、工厂方法模式"></a>2、工厂方法模式</h3><p>在简单方法模式中，把工厂抽象了出来。</p>
+<p>缺点：不仅多了产品，还多了工厂</p>
+<pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">interface</span> <span class="token class-name">CarFactory</span><span class="token punctuation">&#123;</span>
+    <span class="token class-name">Car</span> <span class="token function">getCar</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">AstonMartinFactory</span> <span class="token keyword">implements</span> <span class="token class-name">CarFactory</span> <span class="token punctuation">&#123;</span>
+   <span class="token annotation punctuation">@Override</span>
+   <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">getCar</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+      <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">AstonMartin</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+   <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">FactoryDemo</span> <span class="token punctuation">&#123;</span>
+ 
+   <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+      <span class="token class-name">Car</span> astonMartin <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">AstonMartinFactory</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+ 	  astonMartin<span class="token punctuation">.</span><span class="token function">name</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+   <span class="token punctuation">&#125;</span>
+   
+<span class="token punctuation">&#125;</span></code></pre>
+
+
+
+<h3 id="3、抽象工厂模式"><a href="#3、抽象工厂模式" class="headerlink" title="3、抽象工厂模式"></a>3、抽象工厂模式</h3><p> 定义一个超级工厂接口，接口中有一些列的相关产品工厂。</p>
+<p>例如：护肤品工厂，会生成面膜、眼霜、面霜、生体乳等系列产品，需要不同的工厂生产。</p>
+<pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">interface</span> <span class="token class-name">SkinCareProductsFactory</span><span class="token punctuation">&#123;</span>
+   
+    <span class="token class-name">MaskFactory</span> <span class="token function">getMaskFactory</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    
+    <span class="token class-name">EyeCreamFactory</span> <span class="token function">getEyeCreamFactory</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    
+    <span class="token class-name">BodyLotionsFactory</span> <span class="token function">getBodyLotionsFactory</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    
+<span class="token punctuation">&#125;</span></code></pre>
+
+<pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Demo</span> <span class="token punctuation">&#123;</span>
+ 
+   <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+      <span class="token class-name">SkinCareProductsFactory</span> <span class="token class-name">Lancome</span> <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">LancomeSkinCareProductsFactory</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+ 	  <span class="token class-name">MaskFactory</span> lancomeMaskFactory <span class="token operator">=</span> <span class="token class-name">Lancome</span><span class="token punctuation">.</span><span class="token function">getMaskFactory</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token class-name">Mask</span> lancomeMask <span class="token operator">=</span> lancomeMaskFactory<span class="token punctuation">.</span><span class="token function">getMaskProduct</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+       
+      <span class="token class-name">EyeCreamFactory</span> lancomeEyeCreamFactory <span class="token operator">=</span> <span class="token class-name">Lancome</span><span class="token punctuation">.</span><span class="token function">getEyeCreamFactory</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token class-name">EyeCream</span> lancomeEyeCream <span class="token operator">=</span> lancomeMaskFactory<span class="token punctuation">.</span><span class="token function">getEyeCreamProduct</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+   <span class="token punctuation">&#125;</span>
+   
 <span class="token punctuation">&#125;</span></code></pre>
 
 
